@@ -1,0 +1,19 @@
+.consulta_container {
+    width: 45%;
+}
+
+@media screen and (max-width: 1000px) {
+    .consulta_container {
+        width: 45%;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .consulta_container {
+        width: 65%;
+    }
+}
+
+.consulta_container_externo {
+    overflow: hidden;
+}
