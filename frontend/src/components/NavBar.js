@@ -1,9 +1,20 @@
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser } from '../redux/slices/userSlice.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function NavBar() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+      
+  const handleLogout = () =>{
+      dispatch(logoutUser());
+      navigate('/');
+  }
+
   return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
@@ -18,6 +29,9 @@ function NavBar() {
             </Nav.Link>
             <Nav.Link href="/restrito/consulta-colaborador">
               Consulta de colaborador
+            </Nav.Link>
+            <Nav.Link onClick={handleLogout} href="/">
+              Sair
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
