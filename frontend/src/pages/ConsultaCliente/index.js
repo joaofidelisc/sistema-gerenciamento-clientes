@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "../../components/NavBar.js";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  Table,
-  InputGroup,
-  FormControl,
-} from "react-bootstrap";
+import { Table, InputGroup, FormControl, Modal, Button } from "react-bootstrap";
 
 import "./styles.css";
 
@@ -17,6 +13,7 @@ function ConsultaCliente() {
     telefone: "",
   });
   const [editedUser, setEditedUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -44,6 +41,10 @@ function ConsultaCliente() {
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
     }
+  };
+
+  const otimizarRota = () => {
+    setShowModal(true);
   };
 
   useEffect(() => {
@@ -133,6 +134,22 @@ function ConsultaCliente() {
                 ))}
               </tbody>
             </Table>
+            <Button variant="primary" onClick={otimizarRota}>
+              Otimizar Rota
+            </Button>
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Melhor Rota</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <p>Caminho: (0, 0), (0, 1), (0, 2), ...</p>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowModal(false)}>
+                  Fechar
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </div>
         </div>
       </div>
