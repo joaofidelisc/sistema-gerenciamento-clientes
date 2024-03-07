@@ -14,6 +14,9 @@ routes.post("/api/clientes/inserir-cliente", clienteController.createNewClient);
 routes.get("/api/colaboradores/listar-colaboradores", colaboradorController.getAllCollaborators);
 routes.post("/api/colaboradores/inserir-colaborador", colaboradorController.createNewCollaborator);
 
+//Rota de login
+routes.post("/api/login", colaboradorController.loginUser);
+
 routes.get("/api/calcular-rota", (req, res) => {
  const pythonScriptPath = path.join(__dirname, "..", "services", "tsm.py");
  console.log("Entrou na rota")

@@ -20,12 +20,33 @@ const colaboradorController = {
       );
       res.status(201).json(newCollaborator);
     } catch (error) {
-      console.log("ERROR.CODE", error.code, typeof(error.code))
-      if (error.code === '23505' && error.constraint === 'colaborador_email_key') {
+      console.log("ERROR.CODE", error.code, typeof error.code);
+      if (
+        error.code === "23505" &&
+        error.constraint === "colaborador_email_key"
+      ) {
         res.status(400).json({ error: "E-mail já cadastrado." });
       } else {
         res.status(500).json({ error: "Erro ao criar novo colaborador." });
       }
+    }
+  },
+
+  loginUser: async (req, res) => {
+    const { email, senha } = req.body;
+    try {
+      const authenticatedUser = await ColaboradorModel.authenticateUser(
+        email,
+        senha
+      );
+
+      if (authenticatedUser) {
+        res.status(200).json(authenticatedUser);
+      } else {
+        res.status(401).json({ error: "Credenciais inválidas." });
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao autenticar o usuário." });
     }
   },
 };
