@@ -13,11 +13,7 @@ function RestrictedRoute() {
     <Routes>
       <Route exact path="/" element={<CadastroCliente />} />
       <Route exact path="/consulta-cliente" element={<ConsultaCliente />} />
-      <Route
-        exact
-        path="/consulta-colaborador"
-        element={<ConsultaColaborador />}
-      />
+      <Route exact path="/consulta-colaborador"element={<ConsultaColaborador />} />
     </Routes>
   );
 }

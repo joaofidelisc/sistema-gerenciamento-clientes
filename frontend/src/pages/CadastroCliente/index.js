@@ -38,21 +38,38 @@ function CadastroCliente() {
     return users.findIndex((user) => user.email === email);
   };
 
-  const onSubmit = (data) => {
-    const thereIsUser = userExists(data.email);
-    if (thereIsUser == -1) {
-      dispatch(
-        addUser({
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          birthdate: data.birthdate,
-          cpf: data.cpf,
-        })
+  const onSubmit = async (data) => {
+    try {
+      const generateRandomCoordinate = () => Math.floor(Math.random() * 100); // Gera valores de 0 a 99
+
+      const x = generateRandomCoordinate();
+      const y = generateRandomCoordinate();
+
+      const response = await fetch(
+        "http://localhost:8000/api/clientes/inserir-cliente",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nome: data.name,
+            email: data.email,
+            telefone: data.phone,
+            localizacao: `(${x}, ${y})`,
+          }),
+        }
       );
-      toastHandler("Cliente cadastrado", "sucess");
-    } else {
-      toastHandler("Usuário já cadastrado", "failed");
+
+      if (response.ok) {
+        toastHandler("Cliente cadastrado", "success");
+        // Adicione lógica adicional, se necessário
+      } else {
+        toastHandler("Falha no cadastro do cliente", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toastHandler("Erro inesperado", "error");
     }
   };
 

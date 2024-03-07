@@ -1,33 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "../../components/NavBar.js";
 import "react-toastify/dist/ReactToastify.css";
-import { Button, Table, InputGroup, FormControl } from "react-bootstrap";
+import {
+  Table,
+  InputGroup,
+  FormControl,
+} from "react-bootstrap";
 
 import "./styles.css";
 
 function ConsultaCliente() {
-  const initialUsers = [
-    {
-      id: 1,
-      email: "usuario1@email.com",
-      nome: "Usuário 1",
-      telefone: "(11) 1234-5678",
-    },
-    {
-      id: 2,
-      email: "usuario2@email.com",
-      nome: "Usuário 2",
-      telefone: "(22) 2345-6789",
-    },
-    {
-      id: 3,
-      email: "usuario3@email.com",
-      nome: "Usuário 3",
-      telefone: "(33) 3456-7890",
-    },
-  ];
-
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState({
     email: "",
     nome: "",
@@ -38,19 +21,6 @@ function ConsultaCliente() {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilter((prevFilter) => ({ ...prevFilter, [name]: value }));
-  };
-
-  const handleEditClick = (id) => {
-    const userToEdit = users.find((user) => user.id === id);
-    setEditedUser(userToEdit);
-  };
-
-  const handleSaveEdit = () => {
-    setEditedUser(null);
-  };
-
-  const handleCancelEdit = () => {
-    setEditedUser(null);
   };
 
   const handleInputChange = (e) => {
@@ -65,6 +35,20 @@ function ConsultaCliente() {
       user.telefone.includes(filter.telefone)
     );
   });
+
+  const fetchData = async (url) => {
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData("http://localhost:8000/api/clientes/listar-clientes");
+  }, []);
 
   return (
     <div>
@@ -104,7 +88,6 @@ function ConsultaCliente() {
                   <th>Email</th>
                   <th>Nome</th>
                   <th>Telefone</th>
-                  <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -144,22 +127,6 @@ function ConsultaCliente() {
                         />
                       ) : (
                         user.telefone
-                      )}
-                    </td>
-                    <td>
-                      {editedUser?.id === user.id ? (
-                        <>
-                          <Button variant="success" onClick={handleSaveEdit}>
-                            Salvar
-                          </Button>
-                          <Button variant="danger" onClick={handleCancelEdit}>
-                            Cancelar
-                          </Button>
-                        </>
-                      ) : (
-                        <Button onClick={() => handleEditClick(user.id)}>
-                          Editar
-                        </Button>
                       )}
                     </td>
                   </tr>

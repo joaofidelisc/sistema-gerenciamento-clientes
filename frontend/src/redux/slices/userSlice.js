@@ -7,6 +7,7 @@ const initialState = {
   currentUser: localStorage.getItem("currentUser")
     ? JSON.parse(localStorage.getItem("currentUser"))
     : [],
+  clients: [],
 };
 
 const userSlice = createSlice({
@@ -28,6 +29,10 @@ const userSlice = createSlice({
         });
       }
     },
+    addCliente(state, action) {
+      const newClient = action.payload;
+      state.clients.push(newClient);
+    },
     loginUser(state, action) {
       const infoUser = action.payload;
       state.currentUser.push({
@@ -41,6 +46,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { addUser, loginUser, logoutUser, addPaymentMethod } =
-  userSlice.actions;
+export const { addUser, loginUser, logoutUser } = userSlice.actions;
 export default userSlice.reducer;
