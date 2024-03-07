@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addUser, registeredUser } from "../../redux/slices/userSlice";
 import { useForm } from "react-hook-form";
 
 import { toast, ToastContainer } from "react-toastify";
@@ -12,9 +11,7 @@ import "./styles.css";
 
 function CadastroColaborador() {
   const [thereIsCurrentUser, setThereIsCurrentUser] = useState(true);
-
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const {
     register,
@@ -24,36 +21,45 @@ function CadastroColaborador() {
     watch,
   } = useForm();
 
-  const users = useSelector((state) => state.user.users);
   const currentUser = useSelector((state) => state.user.currentUser);
   const password = watch("password", "");
 
-  const toastHandler = (message) => {
-    toast.error(`${message}`, {
-      position: toast.POSITION.BOTTOM_LEFT,
-    });
+  const toastHandler = (message, status) => {
+    if (status === "success")
+      toast.success(`${message}`, {
+        position: toast.POSITION.BOTTOM_LEFT,
+      });
+    else
+      toast.error(`${message}`, {
+        position: toast.POSITION.BOTTOM_LEFT,
+      });
   };
 
-  const userExists = (email) => {
-    return users.findIndex((user) => user.email === email);
-  };
-
-  const onSubmit = (data) => {
-    const thereIsUser = userExists(data.email);
-    console.log("thereIsUser", thereIsUser);
-    if (thereIsUser == -1) {
-      dispatch(
-        addUser({
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          birthdate: data.birthdate,
-          cpf: data.cpf,
-        })
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/colaboradores/inserir-colaborador",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nome: data.name,
+            email: data.email,
+            senha: data.password,
+          }),
+        }
       );
-      navigate("/");
-    } else {
-      toastHandler("Usuário já cadastrado");
+
+      if (response.ok) {
+        toastHandler("Colaborador cadastrado", "success");
+      } else {
+        toastHandler("Falha no cadastro do colaborador", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toastHandler("Erro inesperado", "error");
     }
   };
 
@@ -153,6 +159,9 @@ function CadastroColaborador() {
           </div>
           <div className="d-grid mt-2">
             <button className="btn btn-primary">Cadastrar</button>
+            <Link to="/" className="btn btn-link mb-3">
+              Voltar para o Login
+            </Link>
           </div>
         </form>
         <ToastContainer

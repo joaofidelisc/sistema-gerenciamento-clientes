@@ -7,32 +7,12 @@ const initialState = {
   currentUser: localStorage.getItem("currentUser")
     ? JSON.parse(localStorage.getItem("currentUser"))
     : [],
-  clients: [],
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    addUser(state, action) {
-      const infoUser = action.payload;
-      const userExists = state.users.find(
-        (user) => user.email === infoUser.email
-      );
-      if (!userExists) {
-        state.users.push({
-          name: infoUser.name,
-          email: infoUser.email,
-          password: infoUser.password,
-          birthdate: infoUser.birthdate,
-          cpf: infoUser.cpf,
-        });
-      }
-    },
-    addCliente(state, action) {
-      const newClient = action.payload;
-      state.clients.push(newClient);
-    },
     loginUser(state, action) {
       const infoUser = action.payload;
       state.currentUser.push({
@@ -46,5 +26,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { addUser, loginUser, logoutUser } = userSlice.actions;
+export const { loginUser, logoutUser } = userSlice.actions;
 export default userSlice.reducer;

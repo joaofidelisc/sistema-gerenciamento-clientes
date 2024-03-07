@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../../redux/slices/userSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../redux/slices/userSlice";
 import { useForm } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -21,8 +21,8 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const currentUser = useSelector(state => state.user.currentUser);
-  const users = useSelector(state => state.user.users);
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const users = useSelector((state) => state.user.users);
 
   const toastHandler = (message) => {
     toast.error(`${message}`, {
@@ -31,29 +31,39 @@ function Login() {
   };
 
   const userExists = (email) => {
-      return users.findIndex((user) => user.email === email);
-  }
+    return users.findIndex((user) => user.email === email);
+  };
 
-  const onSubmit = (data) => {
-    const thereIsUser = userExists(data.email);
-    console.log('thereIsUser', thereIsUser);
-    if (thereIsUser>=0){
-        if (users[thereIsUser].password === data.password){
-            dispatch(loginUser({email:data.email, password:data.password}));
-            navigate('/restrito/cadastro-cliente');
-        }
-        else
-            toastHandler('Senha incorreta');
-    }else{
-        toastHandler('Usuário não cadastrado!');
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch("http://localhost:8000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          senha: data.password,
+        }),
+      });
+
+      if (response.ok) {
+        const user = await response.json();
+        dispatch(loginUser(user));
+        navigate("/restrito/");
+      } else {
+        const error = await response.json();
+        toastHandler(error.error);
+      }
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      toastHandler("Erro ao fazer login. Tente novamente.");
     }
   };
 
-  useEffect(()=>{
-      if (currentUser.length > 0)
-          navigate('/restrito/cadastro-cliente');
-      else
-          setThereIsCurrentUser(false);
+  useEffect(() => {
+    if (currentUser.length > 0) navigate("/restrito/");
+    else setThereIsCurrentUser(false);
   }, []);
 
   return (

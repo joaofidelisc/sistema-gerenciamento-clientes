@@ -63,7 +63,6 @@ function CadastroCliente() {
 
       if (response.ok) {
         toastHandler("Cliente cadastrado", "success");
-        // Adicione lógica adicional, se necessário
       } else {
         toastHandler("Falha no cadastro do cliente", "error");
       }
