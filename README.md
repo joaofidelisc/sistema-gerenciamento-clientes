@@ -5,7 +5,8 @@ Projeto desenvolvido com React, Node.js, Express e Python, incluindo:
 - Cálculo da melhor rota para visitas (algoritmo genético para o problema do caixeiro viajante).
 
 Como executar o projeto:  
-1º) Clone o repositório: git clone https://github.com/usuario/projeto-gerenciamento-clientes.git  
+1º) Clone o repositório: git clone https://github.com/usuario/projeto-gerenciamento-clientes.git 
+ - **IMPORTANTE** - **O projeto deve ser executado na branch "DEV"**
 2º) Instale as dependências:  
  - Front-end: cd front-end && npm install  
  - Back-end: cd back-end && npm install
