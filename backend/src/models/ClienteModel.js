@@ -3,7 +3,7 @@ const db = require("../config/db");
 const ClienteModel = {
   getAllClients: async () => {
     try {
-      const query = "SELECT * FROM cliente";
+      const query = "SELECT id, nome, email, telefone, localizacao FROM cliente";
       const result = await db.query(query);
       return result.rows;
     } catch (error) {

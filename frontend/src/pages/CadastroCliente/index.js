@@ -34,17 +34,8 @@ function CadastroCliente() {
       });
   };
 
-  const userExists = (email) => {
-    return users.findIndex((user) => user.email === email);
-  };
-
   const onSubmit = async (data) => {
     try {
-      const generateRandomCoordinate = () => Math.floor(Math.random() * 100); // Gera valores de 0 a 99
-
-      const x = generateRandomCoordinate();
-      const y = generateRandomCoordinate();
-
       const response = await fetch(
         "http://localhost:8000/api/clientes/inserir-cliente",
         {
@@ -56,7 +47,7 @@ function CadastroCliente() {
             nome: data.name,
             email: data.email,
             telefone: data.phone,
-            localizacao: `(${x}, ${y})`,
+            localizacao: data.localizacao,
           }),
         }
       );
@@ -138,6 +129,28 @@ function CadastroCliente() {
                 </span>
               )}
             </div>
+            <div className="mb-2">
+              <label htmlFor="localizacao">Localização (x, y)</label>
+              <input
+                id="localizacao"
+                {...register("localizacao", {
+                  required: "Preencha a localização",
+                  pattern: {
+                    value: /^\(\d+,\s*\d+\)$/,
+                    message: "Formato inválido de localização (ex: (10, 20))",
+                  },
+                })}
+                placeholder="(x, y)"
+                type="text"
+                className="form-control"
+              />
+              {errors.localizacao && (
+                <span style={{ color: "red" }} role="alert">
+                  {errors.localizacao.message}
+                </span>
+              )}
+            </div>
+
             <div className="d-grid mt-2">
               <button className="btn btn-primary">Cadastrar</button>
             </div>

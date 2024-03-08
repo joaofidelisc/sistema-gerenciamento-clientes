@@ -1,7 +1,9 @@
 const express = require("express");
-const { exec } = require("child_process");
+const { spawn } = require("child_process");
 const path = require("path");
 const routes = express.Router();
+
+routes.use(express.json());
 
 const clienteController = require("../controllers/ClienteController");
 const colaboradorController = require("../controllers/ColaboradorController");
@@ -17,25 +19,23 @@ routes.post("/api/colaboradores/inserir-colaborador", colaboradorController.crea
 //Rota de login
 routes.post("/api/login", colaboradorController.loginUser);
 
-routes.get("/api/calcular-rota", (req, res) => {
- const pythonScriptPath = path.join(__dirname, "..", "services", "tsm.py");
- console.log("Entrou na rota")
- exec(`python "${pythonScriptPath}"`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Erro ao executar o comando: ${error.message}`);
-      res.status(500).json({ error: "Erro ao chamar a função Python" });
-      return;
-    }
+routes.post("/api/calcular-rota", (req, res) => {
+  const clientes = req.body;
+  const pythonScriptPath = path.join(__dirname, "..", "services", "tsm.py");
+  const pythonProcess = spawn('python', [pythonScriptPath]);
 
-    if (stderr) {
-      console.error(`Erro na execução do script Python: ${stderr}`);
-      res.status(500).json({ error: "Erro ao chamar a função Python" });
-      return;
-    }
+  pythonProcess.stdout.on('data', (data) => {
+      console.log(`Saída: ${data}`);
+      res.status(200).json({ message: "Função Python chamada com sucesso", data: JSON.parse(data) });
+  });
 
-    console.log(`Saída do script Python: ${stdout}`);
-    res.status(200).json({ message: "Função Python chamada com sucesso" });
- });
+  pythonProcess.stderr.on('data', (data) => {
+      console.error(`Erro na execução do script Python: ${data}`);
+      res.status(500).json({ error: "Erro ao chamar a função Python" });
+  });
+
+  pythonProcess.stdin.write(JSON.stringify(clientes));
+  pythonProcess.stdin.end();
 });
 
 module.exports = routes;

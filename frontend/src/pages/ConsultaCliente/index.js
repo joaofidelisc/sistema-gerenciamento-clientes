@@ -13,6 +13,7 @@ function ConsultaCliente() {
     telefone: "",
   });
   const [editedUser, setEditedUser] = useState(null);
+  const [optimizedRoute, setOptimizedRoute] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
   const handleFilterChange = (e) => {
@@ -43,8 +44,28 @@ function ConsultaCliente() {
     }
   };
 
-  const otimizarRota = () => {
-    setShowModal(true);
+  const otimizarRota = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/api/calcular-rota", {
+        method: "POST", // Ou 'GET', dependendo de como a API está configurada
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // Supondo que a API espera receber os dados dos clientes para calcular a rota
+        body: JSON.stringify(users), // Ajuste conforme o esperado pela API
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setOptimizedRoute(data.data.data); // Ajuste de acordo com o formato da resposta
+        setShowModal(true);
+      } else {
+        // Tratamento de resposta não bem-sucedida
+        console.error("Não foi possível otimizar a rota.");
+      }
+    } catch (error) {
+      console.error("Erro ao otimizar rota:", error);
+    }
   };
 
   useEffect(() => {
@@ -89,6 +110,7 @@ function ConsultaCliente() {
                   <th>Email</th>
                   <th>Nome</th>
                   <th>Telefone</th>
+                  <th>Localização</th>
                 </tr>
               </thead>
               <tbody>
@@ -130,6 +152,7 @@ function ConsultaCliente() {
                         user.telefone
                       )}
                     </td>
+                    <td>{user.localizacao}</td>
                   </tr>
                 ))}
               </tbody>
@@ -137,12 +160,37 @@ function ConsultaCliente() {
             <Button variant="primary" onClick={otimizarRota}>
               Otimizar Rota
             </Button>
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
+            <Modal
+              show={showModal}
+              onHide={() => setShowModal(false)}
+              size="lg"
+            >
               <Modal.Header closeButton>
                 <Modal.Title>Melhor Rota</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <p>Caminho: (0, 0), (0, 1), (0, 2), ...</p>
+                <div className="modal-table-responsive">
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>Localização</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {optimizedRoute.map((cliente, index) => (
+                        <tr key={index}>
+                          <td>{cliente.nome}</td>
+                          <td>{cliente.email}</td>
+                          <td>{cliente.telefone}</td>
+                          <td>{cliente.localizacao}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={() => setShowModal(false)}>

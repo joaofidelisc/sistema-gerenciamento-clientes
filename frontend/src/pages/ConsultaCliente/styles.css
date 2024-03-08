@@ -18,3 +18,7 @@
 .consulta_container_externo {
     overflow: hidden;
 }
+
+.modal-table-responsive {
+    overflow-x: auto;
+}
