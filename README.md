@@ -4,6 +4,9 @@ Projeto desenvolvido com React, Node.js, Express e Python, incluindo:
 - Sistema de gerenciamento de clientes;
 - Cálculo da melhor rota para visitas (algoritmo genético para o problema do caixeiro viajante).
 
+Vídeo explicativo sobre o sistema:
+- https://drive.google.com/file/d/1PjjlQO5gTq_fvc23L_lMScwWihEib169/view?usp=sharing  
+  
 Como executar o projeto:  
 1º) Clone o repositório: git clone https://github.com/joaofidelisc/sistema-gerenciamento-clientes.git
  - **IMPORTANTE** - **O projeto deve ser executado na branch "DEV"**  
