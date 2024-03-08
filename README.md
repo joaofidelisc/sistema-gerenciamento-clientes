@@ -14,7 +14,9 @@ Como executar o projeto:
  - Front-end: cd front-end && npm install  
  - Back-end: cd back-end && npm install
    
-3º) Inicie os contêineres Docker: docker-compose up -d  
+3º) Inicie os contêineres Docker: 
+ - Acesse o diretório sistema-gerenciamento-clientes\backend\src
+ - Execute o comando docker-compose up -d  
 4º) Acesse o terminal do contêiner do backend: docker exec -it backend-sistema bash  
 5º) Conecte-se ao banco de dados PostgreSQL: psql -U postgres -d gerenciaclientes  
 6º) Crie as tabelas:  
