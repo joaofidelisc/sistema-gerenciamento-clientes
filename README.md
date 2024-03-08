@@ -45,7 +45,8 @@ INSERT INTO cliente (nome, email, telefone, localizacao) VALUES
 ('Usuário Cliente 4', 'cliente4@email.com', '(44) 4444-4444', '(4, 4)'),
 ('Usuário Cliente 5', 'cliente5@email.com', '(55) 5555-5555', '(5, 5)');
 ```
-8º) Inicie o front-end: cd front-end && npm start
+8º) Inicie o front-end: cd front-end && npm start  
+9º) Cadastre um colaborador pelo front-end para fazer login no sistema
 
 Sobre o algoritmo genético:
 O algoritmo genético implementado em Python resolve o problema do caixeiro viajante, buscando a rota mais eficiente para visitar um conjunto de clientes. O algoritmo utiliza:
