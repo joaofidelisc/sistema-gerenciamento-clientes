@@ -102,7 +102,7 @@ if __name__ == "__main__":
     try:
         stdin_input = sys.stdin.read()
         clientes = json.loads(stdin_input)
-        caminho_ordenado = algoritmo_genetico(clientes, num_geracoes=100, tamanho_populacao=40, probabilidade_mutacao=0.2, num_pais_selecionados=20, num_geracoes_estagnacao=50)        
+        caminho_ordenado = algoritmo_genetico(clientes, num_geracoes=90, tamanho_populacao=40, probabilidade_mutacao=0.2, num_pais_selecionados=20, num_geracoes_estagnacao=45)        
         print(json.dumps({"success": True, "data": caminho_ordenado}, ensure_ascii=False))
         
     except json.JSONDecodeError as e:
