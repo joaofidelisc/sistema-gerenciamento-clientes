@@ -25,7 +25,6 @@ routes.post("/api/calcular-rota", (req, res) => {
   const pythonProcess = spawn('python', [pythonScriptPath]);
 
   pythonProcess.stdout.on('data', (data) => {
-      console.log(`Saída: ${data}`);
       res.status(200).json({ message: "Função Python chamada com sucesso", data: JSON.parse(data) });
   });
 

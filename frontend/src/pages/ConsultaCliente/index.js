@@ -15,6 +15,7 @@ function ConsultaCliente() {
   const [editedUser, setEditedUser] = useState(null);
   const [optimizedRoute, setOptimizedRoute] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -45,26 +46,27 @@ function ConsultaCliente() {
   };
 
   const otimizarRota = async () => {
+    setIsCalculating(true);
     try {
       const response = await fetch("http://localhost:8000/api/calcular-rota", {
-        method: "POST", // Ou 'GET', dependendo de como a API está configurada
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        // Supondo que a API espera receber os dados dos clientes para calcular a rota
-        body: JSON.stringify(users), // Ajuste conforme o esperado pela API
+        body: JSON.stringify(users),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setOptimizedRoute(data.data.data); // Ajuste de acordo com o formato da resposta
+        setOptimizedRoute(data.data.data);
         setShowModal(true);
       } else {
-        // Tratamento de resposta não bem-sucedida
         console.error("Não foi possível otimizar a rota.");
       }
     } catch (error) {
       console.error("Erro ao otimizar rota:", error);
+    } finally {
+      setIsCalculating(false);
     }
   };
 
@@ -157,9 +159,13 @@ function ConsultaCliente() {
                 ))}
               </tbody>
             </Table>
-            <Button variant="primary" onClick={otimizarRota}>
-              Otimizar Rota
-            </Button>
+            {isCalculating ? (
+              <p>Calculando rota...</p> // Você pode substituir isso por um componente de spinner, se preferir
+            ) : (
+              <Button variant="primary" onClick={otimizarRota}>
+                Otimizar Rota
+              </Button>
+            )}
             <Modal
               show={showModal}
               onHide={() => setShowModal(false)}
