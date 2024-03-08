@@ -1,56 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "../../components/NavBar.js";
 import "react-toastify/dist/ReactToastify.css";
-import { Button, Table, InputGroup, FormControl } from "react-bootstrap";
+import { Table, InputGroup, FormControl, Modal, Button } from "react-bootstrap";
 
 import "./styles.css";
 
 function ConsultaCliente() {
-  const initialUsers = [
-    {
-      id: 1,
-      email: "usuario1@email.com",
-      nome: "Usuário 1",
-      telefone: "(11) 1234-5678",
-    },
-    {
-      id: 2,
-      email: "usuario2@email.com",
-      nome: "Usuário 2",
-      telefone: "(22) 2345-6789",
-    },
-    {
-      id: 3,
-      email: "usuario3@email.com",
-      nome: "Usuário 3",
-      telefone: "(33) 3456-7890",
-    },
-  ];
-
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
   const [filter, setFilter] = useState({
     email: "",
     nome: "",
     telefone: "",
   });
   const [editedUser, setEditedUser] = useState(null);
+  const [optimizedRoute, setOptimizedRoute] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilter((prevFilter) => ({ ...prevFilter, [name]: value }));
-  };
-
-  const handleEditClick = (id) => {
-    const userToEdit = users.find((user) => user.id === id);
-    setEditedUser(userToEdit);
-  };
-
-  const handleSaveEdit = () => {
-    setEditedUser(null);
-  };
-
-  const handleCancelEdit = () => {
-    setEditedUser(null);
   };
 
   const handleInputChange = (e) => {
@@ -65,6 +34,45 @@ function ConsultaCliente() {
       user.telefone.includes(filter.telefone)
     );
   });
+
+  const fetchData = async (url) => {
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+    }
+  };
+
+  const otimizarRota = async () => {
+    setIsCalculating(true);
+    try {
+      const response = await fetch("http://localhost:8000/api/calcular-rota", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(users),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setOptimizedRoute(data.data.data);
+        setShowModal(true);
+      } else {
+        console.error("Não foi possível otimizar a rota.");
+      }
+    } catch (error) {
+      console.error("Erro ao otimizar rota:", error);
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData("http://localhost:8000/api/clientes/listar-clientes");
+  }, []);
 
   return (
     <div>
@@ -104,7 +112,7 @@ function ConsultaCliente() {
                   <th>Email</th>
                   <th>Nome</th>
                   <th>Telefone</th>
-                  <th>Ações</th>
+                  <th>Localização</th>
                 </tr>
               </thead>
               <tbody>
@@ -146,26 +154,56 @@ function ConsultaCliente() {
                         user.telefone
                       )}
                     </td>
-                    <td>
-                      {editedUser?.id === user.id ? (
-                        <>
-                          <Button variant="success" onClick={handleSaveEdit}>
-                            Salvar
-                          </Button>
-                          <Button variant="danger" onClick={handleCancelEdit}>
-                            Cancelar
-                          </Button>
-                        </>
-                      ) : (
-                        <Button onClick={() => handleEditClick(user.id)}>
-                          Editar
-                        </Button>
-                      )}
-                    </td>
+                    <td>{user.localizacao}</td>
                   </tr>
                 ))}
               </tbody>
             </Table>
+            {isCalculating ? (
+              <p>Calculando rota...</p> // Você pode substituir isso por um componente de spinner, se preferir
+            ) : (
+              <Button variant="primary" onClick={otimizarRota}>
+                Otimizar Rota
+              </Button>
+            )}
+            <Modal
+              show={showModal}
+              onHide={() => setShowModal(false)}
+              size="lg"
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Melhor Rota</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="modal-table-responsive">
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>Localização</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {optimizedRoute.map((cliente, index) => (
+                        <tr key={index}>
+                          <td>{cliente.nome}</td>
+                          <td>{cliente.email}</td>
+                          <td>{cliente.telefone}</td>
+                          <td>{cliente.localizacao}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowModal(false)}>
+                  Fechar
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </div>
         </div>
       </div>

@@ -1,8 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { addUser } from "../../redux/slices/userSlice";
 import { useForm } from "react-hook-form";
 import NavBar from "../../components/NavBar.js";
 import { toast, ToastContainer } from "react-toastify";
@@ -11,17 +8,11 @@ import "react-toastify/dist/ReactToastify.css";
 import "./styles.css";
 
 function CadastroCliente() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-
-  const users = useSelector((state) => state.user.users);
-  const currentUser = useSelector((state) => state.user.currentUser);
 
   const toastHandler = (message, status) => {
     if (status === "success")
@@ -34,25 +25,32 @@ function CadastroCliente() {
       });
   };
 
-  const userExists = (email) => {
-    return users.findIndex((user) => user.email === email);
-  };
-
-  const onSubmit = (data) => {
-    const thereIsUser = userExists(data.email);
-    if (thereIsUser == -1) {
-      dispatch(
-        addUser({
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          birthdate: data.birthdate,
-          cpf: data.cpf,
-        })
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/clientes/inserir-cliente",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nome: data.name,
+            email: data.email,
+            telefone: data.phone,
+            localizacao: data.localizacao,
+          }),
+        }
       );
-      toastHandler("Cliente cadastrado", "sucess");
-    } else {
-      toastHandler("Usuário já cadastrado", "failed");
+
+      if (response.ok) {
+        toastHandler("Cliente cadastrado", "success");
+      } else {
+        toastHandler("Falha no cadastro do cliente", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toastHandler("Erro inesperado", "error");
     }
   };
 
@@ -122,6 +120,28 @@ function CadastroCliente() {
                 </span>
               )}
             </div>
+            <div className="mb-2">
+              <label htmlFor="localizacao">Localização (x, y)</label>
+              <input
+                id="localizacao"
+                {...register("localizacao", {
+                  required: "Preencha a localização",
+                  pattern: {
+                    value: /^\(\d+,\s*\d+\)$/,
+                    message: "Formato inválido de localização (ex: (10, 20))",
+                  },
+                })}
+                placeholder="(x, y)"
+                type="text"
+                className="form-control"
+              />
+              {errors.localizacao && (
+                <span style={{ color: "red" }} role="alert">
+                  {errors.localizacao.message}
+                </span>
+              )}
+            </div>
+
             <div className="d-grid mt-2">
               <button className="btn btn-primary">Cadastrar</button>
             </div>

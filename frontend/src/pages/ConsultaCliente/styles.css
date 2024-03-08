@@ -1,19 +1,24 @@
 .consulta_container {
-    width: 45%;
+    width: 80%;
+    margin: auto;
 }
 
 @media screen and (max-width: 1000px) {
     .consulta_container {
-        width: 45%;
+        width: 90%;
     }
 }
 
 @media screen and (max-width: 700px) {
     .consulta_container {
-        width: 65%;
+        width: 100%;
     }
 }
 
 .consulta_container_externo {
     overflow: hidden;
+}
+
+.modal-table-responsive {
+    overflow-x: auto;
 }
