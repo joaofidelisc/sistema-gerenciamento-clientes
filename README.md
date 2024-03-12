@@ -8,8 +8,9 @@ Vídeo explicativo sobre o sistema:
 - https://drive.google.com/file/d/1PjjlQO5gTq_fvc23L_lMScwWihEib169/view?usp=sharing  
   
 Como executar o projeto:  
-1º) Clone o repositório: git clone https://github.com/joaofidelisc/sistema-gerenciamento-clientes.git
- - **IMPORTANTE** - **O projeto deve ser executado na branch "DEV"**  
+1º) Clone o repositório: git clone https://github.com/joaofidelisc/sistema-gerenciamento-clientes.git  
+ - **IMPORTANTE** - **O projeto deve ser executado na branch "DEV"**
+   
 2º) Instale as dependências:  
  - Front-end: cd front-end && npm install  
  - Back-end: cd back-end && npm install
